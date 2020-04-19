@@ -1,6 +1,6 @@
 //ERICA CHOU 04/17/2020
 //PLATFORMER PROJECT 5
-//NOTE: THIS GAME CRASHES FOR SOME REASON RANDOMLY AND I CANNOT CONTROL WHEN OR HOW IT CRASHES, RESTART GAME IF THAT IS THE CASE
+//Polar Bear Adventures
 
 #define GL_SILENCE_DEPRECATION
 
@@ -46,7 +46,7 @@ Mix_Chunk* bump;
 Mix_Chunk* stomp;
 
 Scene* currentScene; 
-Scene* sceneList[3];
+Scene* sceneList[4];
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {
