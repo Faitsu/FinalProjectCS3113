@@ -1,4 +1,1 @@
-"# 2D-scene" 
-"# 2D-scene" 
-"# CS3113-GameProg-Erica-Chou" 
-"# CS3113-GameProg-Erica-Chou" 
+Project 5 is about making a Platformer using the tools we learnt about in class and our knowledge of C++ coding. 
