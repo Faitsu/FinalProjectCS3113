@@ -48,9 +48,11 @@ Mix_Chunk* stomp;
 Scene* currentScene; 
 Scene* sceneList[3];
 
+int hp = 3;
 void SwitchToScene(Scene *scene) {
 	currentScene = scene;
 	currentScene->Initialize();
+	currentScene->state.player->hp = hp;
 }
 
 
@@ -191,7 +193,7 @@ void Update() {
 	if (currentScene->state.nextScene >= 0) {
 		SwitchToScene(sceneList[currentScene->state.nextScene]);
 	}
-	
+
 	float tick = (float)SDL_GetTicks() / 1000.f;
 	float deltaTime = tick - LastTicks;
 	LastTicks = tick;
@@ -284,7 +286,13 @@ int main(int argc, char* argv[]) {
 	while (gameIsRunning) {
 		ProcessInput();
 		Update();
-		if (currentScene->state.nextScene >= 0) SwitchToScene(sceneList[currentScene->state.nextScene]);
+		if (currentScene->state.nextScene >= 0) { 
+			if (currentScene->state.nextScene !=1) {
+				hp = currentScene->state.player->hp;
+			}
+			SwitchToScene(sceneList[currentScene->state.nextScene]); 
+			
+		}
 		Render();
 	}
 
