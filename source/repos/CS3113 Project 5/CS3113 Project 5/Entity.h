@@ -101,6 +101,8 @@ class Entity {
 		void CheckCollisionsX(Map *map); 
 		void CheckCollisionsY(Map *map);
 
+		void CollisionMap(Map *map);
+
 		void Shoot(Entity* player);
 
 

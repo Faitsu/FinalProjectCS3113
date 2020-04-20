@@ -134,8 +134,11 @@ void Entity::CheckCollisionsY(Map *map) {    // Probes for tiles
 	}
 
 	if (map->IsSolid(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {      
-
+		position.y += penetration_y;
+		velocity.y = 0;
 		colBot = true;
+		jumpcount = 0;
+		airborne = false;
 	}
 
 	else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {   
@@ -147,7 +150,7 @@ void Entity::CheckCollisionsY(Map *map) {    // Probes for tiles
 		colBotRight = true;
 	}
 
-	if (colBot ||colBotLeft || colBotRight) {
+	if ((colBotLeft || colBotRight) && (velocity.x == 0)) {
 		position.y += penetration_y;
 		velocity.y = 0;
 		jumpcount = 0;
@@ -181,6 +184,7 @@ void Entity::CheckCollisionsX(Map *map) {    // Probes for tiles
 	}
 	
 }
+
 
 void Entity::Shoot(Entity* player) {
 	isActive = true;
@@ -372,12 +376,10 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 		velocity += acceleration * deltaTime;
 
 		position.y += velocity.y * deltaTime;
-		
 		CheckCollisionsY(map);
 		CheckCollisionsY(objects, objectCount);
-
+		
 		position.x += velocity.x * deltaTime;
-
 		CheckCollisionsX(map);
 		CheckCollisionsX(objects, objectCount);
 
