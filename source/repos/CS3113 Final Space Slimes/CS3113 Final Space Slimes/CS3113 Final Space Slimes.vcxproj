@@ -156,6 +156,7 @@
     <Image Include="Polar Bear Pixel.png" />
     <Image Include="Sky.png" />
     <Image Include="Space Slime Player Sprite Sheet.png" />
+    <Image Include="Space Slimes Background.png" />
     <Image Include="Sunset Background.png" />
     <Image Include="Winter Blocks.png" />
   </ItemGroup>

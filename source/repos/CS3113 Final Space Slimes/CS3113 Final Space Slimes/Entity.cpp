@@ -365,7 +365,9 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 
 	else if (entityType == PLAYER || entityType == ENEMY) {
 		//movement logic
-		
+		if (shoot) {
+			shoot = false;
+		}
 
 		velocity.x = movement.x * speed;
 		velocity.y = movement.y * speed;
@@ -435,16 +437,16 @@ void Entity::Render(ShaderProgram* program) {
 	program->SetModelMatrix(modelMatrix);    
 	if (animIndices != NULL) {
 		if (animIdle != NULL ) {//idle will be bigger
-			if (idle && !goLeft) {
+			if (idle) {
 				DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
 				return;
 			}
-			else if (idle && goLeft ) {
+		}
+		else if (shoot != NULL) {//idle will be bigger
+			if (idle) {
 				DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
 				return;
 			}
-
-			
 		}
 		DrawSpriteFromTextureAtlas(program, textureID, animIndices[animIndex]);
 		return;

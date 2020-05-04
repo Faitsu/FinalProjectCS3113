@@ -142,6 +142,9 @@ void ProcessInput() {
 					start = true;
 					currentScene->state.nextScene = 1;
 				}
+				else {
+					currentScene->state.player->shoot = true;
+				}
 				break;
 			}
 		break;

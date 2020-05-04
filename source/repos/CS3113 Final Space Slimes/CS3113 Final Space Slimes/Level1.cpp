@@ -6,14 +6,14 @@
 
 
 unsigned int level1_data[] = { 
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,   
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
-	3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 3,
-	3, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3,
-	3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3
+	9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,   
+	3, 7, 7, 7, 7, 7, 7, 6, 7, 7, 7, 7, 7, 9, 9,
+	3, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
+	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
+	9, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 9, 9,
+	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
+	3, 8, 8, 8, 8, 8, 10, 11, 10, 11, 8, 8, 8, 5, 9,
+	9, 1, 1, 1, 1, 1, 1, 9, 1, 1, 1, 1, 1, 9, 9
 };
 
 void Level1::Initialize() {
@@ -96,8 +96,8 @@ void Level1::Initialize() {
 
 
 
-	GLuint mapTextureID = Util::LoadTexture("Winter Blocks.png");
-	state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTextureID, 1.0f, 4, 1);
+	GLuint mapTextureID = Util::LoadTexture("Space Slimes Background.png");
+	state.map = new Map(LEVEL1_WIDTH, LEVEL1_HEIGHT, level1_data, mapTextureID, 1.0f, 3, 4);
 	state.nextScene = -1;
 }
 void Level1::Update(float deltaTime) {
