@@ -21,6 +21,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
+
 #include <SDL_mixer.h>
 
 
@@ -31,6 +32,8 @@
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
+#include "Level4.h"
+#include "Level5.h"
 #include "StartScreen.h"
 
 //the music is ever changing and based on process inputs so music set up will also be in the main file
@@ -47,12 +50,21 @@ Mix_Chunk* stomp;
 
 Scene* currentScene; 
 Scene* sceneList[4];
+int currlvl = 1;
+
+//if we complete the whole level, slimes will not respawn
+int completed[5] = {0,0,0,0,0};
+
+
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {
 	currentScene = scene;
 	currentScene->Initialize();
 	currentScene->state.player->hp = hp;
+	if (completed[currlvl - 1] == 1) {
+		currentScene->complete = true;
+	}
 }
 
 
@@ -66,6 +78,7 @@ bool start = false;
 float accumulator = 0.0f;
 float delayTimer = 0.0f;
 bool bumpDirectionLeft;
+
 
 
 
@@ -103,8 +116,10 @@ void Initialize() {
 
 	sceneList[0] = new StartScreen();
 	sceneList[1] = new Level1();
-	//sceneList[2] = new Level2();
-	//sceneList[3] = new Level3();
+	sceneList[2] = new Level2();
+	sceneList[3] = new Level3();
+	sceneList[4] = new Level4();
+	sceneList[5] = new Level5();
 	SwitchToScene(sceneList[0]);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
@@ -287,6 +302,10 @@ int main(int argc, char* argv[]) {
 		Update();
 		if (currentScene->state.nextScene >= 0) { 
 			if (currentScene->state.nextScene !=1) {
+				currlvl = currentScene->state.nextScene;
+				if (currentScene->complete) {
+					completed[currlvl - 2] = 1;
+				}
 				hp = currentScene->state.player->hp;
 			}
 			SwitchToScene(sceneList[currentScene->state.nextScene]); 

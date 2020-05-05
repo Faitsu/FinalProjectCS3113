@@ -106,6 +106,7 @@ class Entity {
 		void Render(ShaderProgram *program);
 		void AI(Entity* player);
 		void AIWalker();
+		void AISleeper();
 		void AIBoss(Entity* player);
 		void AIStalker(Entity* player);
 

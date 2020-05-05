@@ -198,7 +198,9 @@ void Entity::Shoot(Entity* player) {
 	}
 }
 
-
+void Entity::AISleeper() {
+	//do nothing
+};
 void Entity::AIWalker() {
 	//look at points and see wether we should turn or not
 	if (!colBotRight &&colBotLeft && !colBot) {
@@ -277,6 +279,9 @@ void Entity::AIStalker(Entity* player) {
 		switch (enemyType) {
 			case STALKER:
 				AIStalker(player);
+				break;
+			case SLEEPER:
+				AISleeper();
 				break;
 			default:
 				AIWalker();
@@ -372,11 +377,11 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 		velocity.x = movement.x * speed;
 		velocity.y = movement.y * speed;
 		position.y += velocity.y * deltaTime;
-		//CheckCollisionsY(map);
+		CheckCollisionsY(map);
 		CheckCollisionsY(objects, objectCount);
 		
 		position.x += velocity.x * deltaTime;
-		//CheckCollisionsX(map);
+		CheckCollisionsX(map);
 		CheckCollisionsX(objects, objectCount);
 
 		if (entityType == ENEMY) {
@@ -437,7 +442,7 @@ void Entity::Render(ShaderProgram* program) {
 	program->SetModelMatrix(modelMatrix);    
 	if (animIndices != NULL) {
 		if (animIdle != NULL ) {//idle will be bigger
-			if (idle) {
+			if (idle && entityType == PLAYER) {
 				DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
 				return;
 			}
