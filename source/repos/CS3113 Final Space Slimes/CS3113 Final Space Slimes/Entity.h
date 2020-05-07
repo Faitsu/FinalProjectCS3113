@@ -17,6 +17,7 @@
 enum EntityType { PLAYER, PROJECTILE, PLATFORM, ENEMY, BACKGROUND, PROP, LIVES };
 enum EnemyType { NONE, SLEEPER, JUMPER, STALKER, WALKER, BOSS };
 enum LastDir{UP,RIGHT,DOWN,LEFT};
+enum ProjectileType {READY, FIRED};
 
 class Entity {
 	public:  
@@ -81,6 +82,7 @@ class Entity {
 		//Type of Entity (determines how we update it and such)
 		EntityType entityType;
 		EnemyType enemyType = NONE;
+		ProjectileType projectileType;
 
 		glm::vec3 position;   
 		glm::vec3 movement;
