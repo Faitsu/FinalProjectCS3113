@@ -22,6 +22,7 @@ bool Entity::CheckCollision(Entity* other) {
 	}
 }
 
+
 void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
 	for (int i = 0; i < objectCount; i++) { 
 		Entity *object = &objects[i];     
@@ -36,16 +37,6 @@ void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
 				position.y -= penetrationY;              
 				velocity.y = 0; 
 				collidedTop = true;
-
-				if (entityType == PROJECTILE && object->entityType == ENEMY) {
-					isActive = false;
-					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
-						object->isActive = false;
-					}
-					else {
-						object->hp--;
-					}
-				}
 			}
 			else if (velocity.y < 0) { 
 				position.y += penetrationY;          
@@ -53,23 +44,22 @@ void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
 				collidedBottom = true;
 
 				if (entityType == PLAYER && object->entityType ==ENEMY && !recover ) {
-					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
-						object->isActive = false;
-					}
-					else {
-						object->hp--;
-					}
-				}
-				else if (entityType == PROJECTILE && object->entityType == ENEMY) {
-					isActive = false;
-					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
-						object->isActive = false;
-					}
-					else {
-						object->hp--;
-					}
+					object->isActive = false;
 				}
 			}
+            
+            if (entityType == PROJECTILE && object->entityType == ENEMY) {
+                if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
+                    object->isActive = false;
+                }
+                else {
+                    object->hp--;
+                }
+                isActive = false;
+                shoot = false;
+                projectileType = READY;
+                movement = glm::vec3(0,0,0);
+            }
 		}
 	}
 }
@@ -115,13 +105,15 @@ void Entity::CheckCollisionsX(Entity *objects, int objectCount) {
 
 			}
 			else if (entityType == PROJECTILE && object->entityType == ENEMY) {
-				isActive = false;
 				if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
 					object->isActive = false;
 				}
 				else {
 					object->hp--;
 				}
+                isActive = false;
+                shoot = false;
+                projectileType = READY;
 			}
 		}
 	}
@@ -137,87 +129,54 @@ void Entity::CheckCollisionsY(Map *map) {    // Probes for tiles
 	glm::vec3 bottom_right = glm::vec3(position.x + (width / 2), position.y - (height / 2), position.z);  
 	float penetration_x = 0;  
 	float penetration_y = 0;
-	if (entityType == PLAYER) {
-		if (map->IsSolidPlayer(top, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTop = true;
-		}
-		else if (map->IsSolidPlayer(top_left, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTopLeft = true;
-		}
-
-		else if (map->IsSolidPlayer(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTopRight = true;
-		}
-
-		if (map->IsSolidPlayer(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {
-			position.y += penetration_y;
-			velocity.y = 0;
-			colBot = true;
-			airborne = false;
-		}
-
-		else if (map->IsSolidPlayer(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {
-
-			colBotLeft = true;
-		}
-		else if (map->IsSolidPlayer(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {
-
-			colBotRight = true;
-		}
-
+	if (map->IsSolid(top, &penetration_x, &penetration_y) && velocity.y > 0) { 
+		position.y -= penetration_y;      
+		velocity.y = 0; 
+		collidedTop = true;
+		colTop = true;
 	}
-	else {
-		if (map->IsSolid(top, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTop = true;
-		}
-		else if (map->IsSolid(top_left, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTopLeft = true;
-		}
-
-		else if (map->IsSolid(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
-			position.y -= penetration_y;
-			velocity.y = 0;
-			collidedTop = true;
-			colTopRight = true;
-		}
-
-		if (map->IsSolid(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {
-			position.y += penetration_y;
-			velocity.y = 0;
-			colBot = true;
-			airborne = false;
-		}
-
-		else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {
-
-			colBotLeft = true;
-		}
-		else if (map->IsSolid(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {
-
-			colBotRight = true;
-		}
+	else if (map->IsSolid(top_left, &penetration_x, &penetration_y) && velocity.y > 0) { 
+		position.y -= penetration_y; 
+		velocity.y = 0;      
+		collidedTop = true; 
+		colTopLeft = true;
 	}
+	
+	else if (map->IsSolid(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
+		position.y -= penetration_y;     
+		velocity.y = 0;     
+		collidedTop = true;
+		colTopRight = true;
+	}
+
+	if (map->IsSolid(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {      
+		position.y += penetration_y;
+		velocity.y = 0;
+		colBot = true;
+		airborne = false;
+	}
+
+	else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {   
+
+		colBotLeft = true;
+	}
+	else if (map->IsSolid(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {  
+
+		colBotRight = true;
+	}
+
 	if ((colBotLeft || colBotRight) && (velocity.x == 0)) {
 		position.y += penetration_y;
 		velocity.y = 0;
-
+		
 		airborne = false;
 	}
+    
+    if ((colBotLeft || colBotRight) && entityType == PROJECTILE) {
+        isActive = false;
+        shoot = false;
+        projectileType = READY;
+    }
 }
 
 void Entity::CheckCollisionsX(Map *map) {    // Probes for tiles   
@@ -225,30 +184,17 @@ void Entity::CheckCollisionsX(Map *map) {    // Probes for tiles
 	glm::vec3 right = glm::vec3(position.x + (width / 2), position.y, position.z);     
 	float penetration_x = 0;
 	float penetration_y = 0;
-	if (entityType == PLAYER) {
-		if (map->IsSolidPlayer(left, &penetration_x, &penetration_y) && velocity.x < 0) {
-			position.x += penetration_x;
-			velocity.x = 0;
-			colLeft = true;
-		}
-		if (map->IsSolidPlayer(right, &penetration_x, &penetration_y) && velocity.x > 0) {
-			position.x -= penetration_x;
-			velocity.x = 0;
-			colRight = true;
-		}
+	if (map->IsSolid(left, &penetration_x, &penetration_y) && velocity.x < 0) {
+		position.x += penetration_x;      
+		velocity.x = 0;    
+		colLeft = true; 
+	}     
+	if (map->IsSolid(right, &penetration_x, &penetration_y) && velocity.x > 0) { 
+		position.x -= penetration_x;     
+		velocity.x = 0;
+		colRight = true; 
 	}
-	else {
-		if (map->IsSolid(left, &penetration_x, &penetration_y) && velocity.x < 0) {
-			position.x += penetration_x;
-			velocity.x = 0;
-			colLeft = true;
-		}
-		if (map->IsSolid(right, &penetration_x, &penetration_y) && velocity.x > 0) {
-			position.x -= penetration_x;
-			velocity.x = 0;
-			colRight = true;
-		}
-	}
+	
 	if ((colLeft || colRight) && entityType == ENEMY) {
 		if (colLeft) {
 			goLeft = false;
@@ -257,23 +203,40 @@ void Entity::CheckCollisionsX(Map *map) {    // Probes for tiles
 			goLeft = true;
 		}
 	}
-	
+    if ((colLeft || colRight) && entityType == PROJECTILE) {
+        isActive = false;
+        shoot = false;
+        projectileType = READY;
+    }
 }
 
 
 void Entity::Shoot(Entity* player) {
-	isActive = true;
-	position = player->position;
 	modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, position);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f, 0.5f, 0.0f));
-	if (player->goLeft) {
-		movement.x = -1.0f;
-	}
-	else {
-		movement.x = 1.0f;
-	}
+    if(projectileType == READY) { //At the time we fire
+        isActive = true;
+        position = player->position;
+        if(player->movement.y > 0){
+            movement = glm::vec3(0,1,0);
+        }
+        else if (player->movement.x < 0) {
+            movement = glm::vec3(-1,0,0);
+        }
+        else if(player->movement.x >= 0){
+            movement = glm::vec3(1,0,0);
+        }
+        else if(player->movement.x >= 0){
+            movement = glm::vec3(1,0,0);
+        }
+        else if(player->movement.y <= 0) {
+            movement = glm::vec3(0,-1,0);
+        }
+        projectileType = FIRED;
+    }
 }
+
 
 void Entity::AISleeper() {
 	//do nothing
@@ -492,12 +455,21 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 		
 	}
 	else if (entityType == PROJECTILE) {
-		if (isActive) {
+		Shoot(player);
+        
+		if (isActive) { //NEED TO MODIFY FOR UPDATING POSITION OF BULLET AFTER RELEASE
+		    if(movement.x) {
 			velocity.x = movement.x*speed;
-
 			position.x += velocity.x * deltaTime;
-			CheckCollisionsX(objects, objectCount);
+		    }
+		    if(movement.y) {
+			velocity.y = movement.y*speed;
+			position.y += velocity.y * deltaTime;
 
+		    }
+            		CheckCollisionsY(objects, objectCount);
+			CheckCollisionsX(objects, objectCount);
+			
 		}
 		modelMatrix = glm::mat4(1.0f);
 		modelMatrix = glm::translate(modelMatrix, position);
