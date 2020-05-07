@@ -112,6 +112,11 @@ void Level4::Initialize() {
 }
 void Level4::Update(float deltaTime) {
 	int enemyCount = 0;
+	if (complete) {
+		for (int k = 0; k < ENEMY_COUNT; k++) {
+			state.enemies[k].isActive = false;
+		}
+	}
 	for (int i = 0; i < ENEMY_COUNT; i++) {
 		//state.enemies[i].movement.x = 1.0f;
 		state.enemies[i].Update(deltaTime, state.player, state.player, 1, state.map);
@@ -131,11 +136,20 @@ void Level4::Update(float deltaTime) {
 	}
 	if (state.player->recover) {
 		state.player->timer += deltaTime;
+		state.player->position = glm::vec3(7, -6.0f, 0);
 		if (state.player->timer >= (deltaTime * 10)) {
 			state.player->recover = false;
 			state.player->timer = 0;
-			state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
-			state.enemies[1].position = glm::vec3(9.5f, -4.0f, 0);
+
+			state.enemies[0].position = glm::vec3(6.0f, -4.0f, 0);
+
+
+			state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);
+			state.enemies[1].goLeft = true;
+
+
+			state.enemies[2].position = glm::vec3(1.0f, -2.0f, 0);
+			state.enemies[2].goLeft = true;
 		}
 	}
 

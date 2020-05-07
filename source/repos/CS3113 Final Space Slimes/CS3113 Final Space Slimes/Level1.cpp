@@ -27,7 +27,6 @@ void Level1::Initialize() {
 		state.player->position = glm::vec3(1.0f, -4.0f, 0);
 	}
 	state.player->movement = glm::vec3(0);
-	//state.player->acceleration = glm::vec3(0, -9.81f, 0);
 	state.player->speed = 1.75f;
 	state.player->textureID = Util::LoadTexture("Space Slime Player Sprite Sheet.png");
 
@@ -87,31 +86,32 @@ void Level1::Initialize() {
 	}
 	
 	else {
-		state.enemies = new Entity[1];
-		state.enemies[0].position = glm::vec3(8, -3.0f, 0);
-		state.enemies[0].movement = glm::vec3(0);
-		state.enemies[0].speed = 1.0f;
-		state.enemies[0].textureID = Util::LoadTexture("Space Slime Boss.png");
+			state.enemies = new Entity[1];
+			state.enemies[0].position = glm::vec3(8, -3.0f, 0);
+			state.enemies[0].movement = glm::vec3(0);
+			state.enemies[0].speed = 1.15f;
+			state.enemies[0].textureID = Util::LoadTexture("Space Slime Boss.png");
 
 
-		state.enemies[0].entityType = ENEMY;
-		state.enemies[0].enemyType = BOSS;
+			state.enemies[0].entityType = ENEMY;
+			state.enemies[0].enemyType = BOSS;
 
-		state.enemies[0].animRight = new int[2]{ 7, 5 };
-		state.enemies[0].animLeft = new int[2]{ 6, 4 };
-		state.enemies[0].animUp = new int[2]{ 0, 1 };
-		state.enemies[0].animDown = new int[2]{ 2, 3 };
-		state.enemies[0].height = 0.95f;
-		state.enemies[0].width = 1.0f;
+			state.enemies[0].animRight = new int[2]{ 7, 5 };
+			state.enemies[0].animLeft = new int[2]{ 6, 4 };
+			state.enemies[0].animUp = new int[2]{ 0, 1 };
+			state.enemies[0].animDown = new int[2]{ 2, 3 };
+			state.enemies[0].height = 0.95f;
+			state.enemies[0].width = 1.0f;
 
 
-		state.enemies[0].animFrames = 2;
-		state.enemies[0].animIndices = state.player->animDown;
-		state.enemies[0].animCols = 3;
-		state.enemies[0].animRows = 3;
+			state.enemies[0].animFrames = 2;
+			state.enemies[0].animIndices = state.player->animDown;
+			state.enemies[0].animCols = 3;
+			state.enemies[0].animRows = 3;
 
-		state.enemies[0].inFirstRoom = true;
-		state.enemies[0].killable = true;
+			
+		
+		
 	}
 	state.lives = new Entity[3];
 	for (int i = 0; i < 3; i++) {
@@ -154,13 +154,26 @@ void Level1::Update(float deltaTime) {
 	else {
 		state.player->Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
 	}
+	//recover so that the hp would not go down while the player is recovering
 	if (state.player-> recover) {
+		state.player->position = glm::vec3(1.0f, -4.0f, 0);
 		state.player ->timer += deltaTime;
 		if (state.player ->timer >= (deltaTime * 10)) {
 			state.player->recover = false;
 			state.player ->timer = 0;
-			state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
-			state.enemies[1].position = glm::vec3(9.5f, -4.0f, 0);
+			if (complete) {
+				state.enemies[0].position = glm::vec3(6.0f, -6.0f, 0);
+				
+				state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);
+
+				state.enemies[2].position = glm::vec3(12.0f, -5.0f, 0);
+				
+				state.enemies[3].position = glm::vec3(1.0f, -2.0f, 0);
+				
+			}
+			else {
+				state.enemies[0].position = glm::vec3(8, -3.0f, 0);
+			}
 		}
 	}
 
@@ -193,7 +206,7 @@ void Level1::Update(float deltaTime) {
 }
 void Level1::Render(ShaderProgram *program) { 
 	state.map->Render(program);
-	if (!state.player->fail) {
+	if (!state.player->fail && !state.player->success) {
 		if (!complete) {
 			for (int i = 0; i < ENEMY_COUNT; i++) {
 				state.enemies[i].Render(program);
@@ -208,6 +221,29 @@ void Level1::Render(ShaderProgram *program) {
 			state.lives[j].Render(program);
 		}
 		state.player->Render(program);
+	}
+	else if (state.player->success) {
+	
+		state.player->Render(program);
+		glm::vec3 fontPos2;
+		glm::vec3 fontPos3;
+
+		if (state.player->position.x > 8.5) {
+			fontPos2 = glm::vec3(6.5f, -3.0f, 0);
+			fontPos3 = glm::vec3(6.5f, -2.0f, 0);
+		}
+		else if (state.player->position.x > 5) {
+			fontPos2 = glm::vec3(state.player->position.x - 1.25f, -3.0f, 0);
+			fontPos3 = glm::vec3(state.player->position.x - 1.5f, -2.0f, 0);
+		}
+		else {
+			fontPos2 = glm::vec3(3.0f, -3.0f, 0);
+			fontPos3 = glm::vec3(2.5f, -2.0f, 0);
+		}
+		GLuint fontTextureID = Util::LoadTexture("pixel_font.png");
+		Util::DrawText(program, fontTextureID, "Congratulations!", .3f, 0.1f, fontPos3);
+		Util::DrawText(program, fontTextureID, "You Won!", .2f, 0.1f, fontPos2);
+	
 	}
 	else {
 		glm::vec3 fontPos2;

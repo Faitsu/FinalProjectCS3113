@@ -111,6 +111,11 @@ void Level3::Initialize() {
 }
 void Level3::Update(float deltaTime) {
 	int enemyCount = 0;
+	if (complete) {
+		for (int k = 0; k < ENEMY_COUNT; k++) {
+			state.enemies[k].isActive = false;
+		}
+	}
 	for (int i = 0; i < ENEMY_COUNT; i++) {
 		//state.enemies[i].movement.x = 1.0f;
 		state.enemies[i].Update(deltaTime, state.player, state.player, 1, state.map);
@@ -129,12 +134,25 @@ void Level3::Update(float deltaTime) {
 		state.player->Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
 	}
 	if (state.player->recover) {
+		state.player->position = glm::vec3(1, -4.0f, 0);
 		state.player->timer += deltaTime;
 		if (state.player->timer >= (deltaTime * 10)) {
 			state.player->recover = false;
 			state.player->timer = 0;
+
 			state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
-			state.enemies[1].position = glm::vec3(9.5f, -4.0f, 0);
+
+
+			state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);
+			state.enemies[1].goLeft = true;
+
+
+			state.enemies[2].position = glm::vec3(1.0f, -2.0f, 0);
+			state.enemies[2].goLeft = true;
+
+
+			state.enemies[3].position = glm::vec3(7.0f, -2.0f, 0);
+			state.enemies[3].goLeft = true;
 		}
 	}
 
@@ -184,7 +202,7 @@ void Level3::Render(ShaderProgram *program) {
 			fontPos3 = glm::vec3(2.5f, -2.0f, 0);
 		}
 
-		GLuint fontTextureID = Util::LoadTexture("pixel_font.png");
+		GLuint fontTextureID = Util::LoadTexture("pixel_font1.png");
 		Util::DrawText(program, fontTextureID, "Game Over!", .3f, 0.1f, fontPos3);
 		Util::DrawText(program, fontTextureID, "Try Again!", .2f, 0.1f, fontPos2);
 	}

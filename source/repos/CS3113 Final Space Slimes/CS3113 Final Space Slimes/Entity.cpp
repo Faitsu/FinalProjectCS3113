@@ -92,26 +92,25 @@ void Entity::CheckCollisionsX(Entity *objects, int objectCount) {
 		}
 		if (collidedRight || collidedLeft) {//logic for enemy collisions with enemy and player or projectile
 			if ((entityType == PLAYER && object->entityType == ENEMY) && !recover) {
-				hp--;
-				recover = true;
+				if (!recover) {
+					hp--;
+					recover = true;
+				}
 				if (hp <= 0) {
 					fail = true;
 					isActive = false;
 				}
-				else {
-					position = glm::vec3(1.0f, -5.0f, 0);
-				}
+				
 
 			}
 			else if (entityType == ENEMY && object->entityType == PLAYER && !recover) {
-				object->hp--;
-				object->recover = true;
+				if (!recover) {
+					object->hp--;
+					object->recover = true;
+				}
 				if (hp <= 0) {
 					fail = true;
 					isActive = false;
-				}
-				else {
-					object->position = glm::vec3(1.0f, -5.0f, 0);
 				}
 
 			}
@@ -541,6 +540,10 @@ void Entity::Render(ShaderProgram* program) {
 	if (!isActive) { return; }
 	program->SetModelMatrix(modelMatrix);    
 	if (animIndices != NULL) {
+		if (success == true && entityType == PLAYER) {
+			DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
+			return;
+		}
 		if (animIdle != NULL ) {//idle will be bigger
 			if (idle && entityType == PLAYER) {
 				switch (lastdir) {

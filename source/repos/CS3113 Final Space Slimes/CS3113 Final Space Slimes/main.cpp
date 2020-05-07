@@ -62,7 +62,7 @@ bool despawnboss = false;
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {
-	int donecounter = 0;
+	int donecounter = 5;
 	currentScene = scene;
 	currentScene->Initialize();
 	currentScene->state.player->hp = hp;
@@ -90,8 +90,11 @@ void SwitchToScene(Scene *scene) {
 				break;
 		}
 	}
-	else if (donecounter == 5) {
+	if (donecounter == 5) {
 		currentScene->state.enemies[0].killable = true;
+		currentScene->state.enemies[0].speed = 1.0f;
+		currentScene->state.enemies[0].inFirstRoom = true;
+	
 	}
 	
 }
