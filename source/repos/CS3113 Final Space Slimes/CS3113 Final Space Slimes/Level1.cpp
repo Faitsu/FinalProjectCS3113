@@ -2,7 +2,7 @@
 #define LEVEL1_WIDTH 15 
 #define LEVEL1_HEIGHT 8
 
-#define ENEMY_COUNT 2
+#define ENEMY_COUNT 4
 
 
 unsigned int level1_data[] = { 
@@ -17,22 +17,15 @@ unsigned int level1_data[] = {
 };
 
 void Level1::Initialize() {
-	//set background
 
-	state.background = new Entity();
-	state.background->textureID = Util::LoadTexture("Sky.png");
-	state.background->entityType = BACKGROUND;
-	state.background->Update(0, state.player, state.enemies, 0, state.map);
-
-	state.prop = new Entity();
-	state.prop->textureID = Util::LoadTexture("Pixel Sign.png");
-	state.prop->entityType = PROP;
-	state.prop->position = glm::vec3(12.5f, -4.0f, 0);
-	state.prop->Update(0, state.player, state.enemies, 0, state.map);
-	state.prop->isActive = false;
 
 	state.player = new Entity();
-	state.player->position = glm::vec3(1, -4.0f, 0);
+	if (!complete) {
+		state.player->position = glm::vec3(7.0f, -4.0f, 0);
+	}
+	else {//the main should handle this but in case it doesnt work I'll just set some default 
+		state.player->position = glm::vec3(1.0f, -4.0f, 0);
+	}
 	state.player->movement = glm::vec3(0);
 	//state.player->acceleration = glm::vec3(0, -9.81f, 0);
 	state.player->speed = 1.75f;
@@ -55,11 +48,11 @@ void Level1::Initialize() {
 	state.player->animRows = 4;
 
 	
-	state.enemies = new Entity[ENEMY_COUNT];
+	
 	//set up Enemy unit
 	
-	if (!complete) {
-
+	if (!complete) {//starting off with 3 basic slimes 
+		state.enemies = new Entity[ENEMY_COUNT];
 		for (int k = 0; k < ENEMY_COUNT; k++) {
 			//Technical 
 			//state.enemies[k].acceleration = glm::vec3(0, -9.81f, 0);
@@ -72,24 +65,53 @@ void Level1::Initialize() {
 
 			//Graphics
 			state.enemies[k].textureID = Util::LoadTexture("Space Slimes.png");
-			state.enemies[k].animLeft = new int[2]{ 6, 4 };
-			state.enemies[k].animRight = new int[2]{ 7,5 };
-			state.enemies[k].animIndices = state.enemies[k].animRight;
+			state.enemies[k].animIdle = new int[2]{ 9, 8 };
+			state.enemies[k].animIndices = state.enemies[k].animIdle;
 			state.enemies[k].animFrames = 2;
 			state.enemies[k].animCols = 4;
 			state.enemies[k].animRows = 3;
 		}
 
-		state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
-		state.enemies[0].enemyType = WALKER;
+		state.enemies[0].position = glm::vec3(6.0f, -6.0f, 0);
+		state.enemies[0].enemyType = SLEEPER;
 
 		state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);
-		state.enemies[1].goLeft = true;
-		state.enemies[1].enemyType = WALKER;
+		state.enemies[1].enemyType = SLEEPER;
+
+		state.enemies[2].position = glm::vec3(12.0f, -5.0f, 0);
+		state.enemies[2].enemyType = SLEEPER;
+
+		state.enemies[3].position = glm::vec3(1.0f, -2.0f, 0);
+		state.enemies[3].enemyType = SLEEPER;
 
 	}
 	
+	else {
+		state.enemies = new Entity[1];
+		state.enemies[0].position = glm::vec3(7, -3.0f, 0);
+		state.enemies[0].movement = glm::vec3(0);
+		state.enemies[0].speed = 1.0f;
+		state.enemies[0].textureID = Util::LoadTexture("Space Slime Boss.png");
 
+
+		state.enemies[0].entityType = ENEMY;
+		state.enemies[0].enemyType = BOSS;
+
+		state.enemies[0].animRight = new int[2]{ 7, 5 };
+		state.enemies[0].animLeft = new int[2]{ 6, 4 };
+		state.enemies[0].animUp = new int[2]{ 0, 1 };
+		state.enemies[0].animDown = new int[2]{ 2, 3 };
+		state.enemies[0].height = 0.95f;
+		state.enemies[0].width = 1.0f;
+
+
+		state.enemies[0].animFrames = 2;
+		state.enemies[0].animIndices = state.player->animDown;
+		state.enemies[0].animCols = 3;
+		state.enemies[0].animRows = 3;
+
+		state.enemies[0].inFirstRoom = true;
+	}
 	state.lives = new Entity[3];
 	for (int i = 0; i < 3; i++) {
 		state.lives[i].textureID = Util::LoadTexture("pixel heart.png");
@@ -107,14 +129,21 @@ void Level1::Initialize() {
 }
 void Level1::Update(float deltaTime) {
 	int enemyCount = 0;
-	for (int i = 0; i < ENEMY_COUNT; i++) {
-		//state.enemies[i].movement.x = 1.0f;
-		state.enemies[i].Update(deltaTime, state.player, state.player,1, state.map);
-		if (!state.enemies[i].isActive) {
-			enemyCount++;
+	if (!complete) {
+		for (int i = 0; i < ENEMY_COUNT; i++) {
+			state.enemies[i].Update(deltaTime, state.player, state.player, 1, state.map);
+			if (!state.enemies[i].isActive) {
+				enemyCount++;
+			}
+			if (enemyCount == ENEMY_COUNT) {
+				complete = true;
+			}
 		}
-		if (enemyCount == ENEMY_COUNT) {
-			complete = true;
+	}
+
+	else {
+		for (int i = 0; i < 1; i++) {
+			state.enemies[i].Update(deltaTime, state.player, state.player, 1, state.map);
 		}
 	}
 
@@ -162,12 +191,17 @@ void Level1::Update(float deltaTime) {
 	}
 }
 void Level1::Render(ShaderProgram *program) { 
-	state.background->Render(program);
-	state.prop->Render(program);
 	state.map->Render(program);
 	if (!state.player->fail) {
-		for (int i = 0; i < ENEMY_COUNT; i++) {
-			state.enemies[i].Render(program);
+		if (!complete) {
+			for (int i = 0; i < ENEMY_COUNT; i++) {
+				state.enemies[i].Render(program);
+			}
+		}
+		else {
+			for (int i = 0; i < 1; i++) {
+				state.enemies[i].Render(program);
+			}
 		}
 		for (int j = 0; j < state.player->hp; j++) {
 			state.lives[j].Render(program);

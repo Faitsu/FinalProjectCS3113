@@ -26,7 +26,7 @@ struct GameState {
 class Scene{
 	//various globalvariables I think I'm going to need
 	 public: 
-		 bool complete = false;
+		 bool complete = true;
 		 GameState state;   
 		 virtual void Initialize() = 0;  
 		 virtual void Update(float deltaTime) = 0;

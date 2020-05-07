@@ -49,22 +49,54 @@ Mix_Chunk* bump;
 Mix_Chunk* stomp;
 
 Scene* currentScene; 
-Scene* sceneList[4];
+Scene* sceneList[7];
 int currlvl = 1;
+int prevlvl = 1;
+
 
 //if we complete the whole level, slimes will not respawn
 int completed[5] = {0,0,0,0,0};
+bool despawnboss = false;
 
 
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {
+	int donecounter = 0;
 	currentScene = scene;
 	currentScene->Initialize();
 	currentScene->state.player->hp = hp;
 	if (completed[currlvl - 1] == 1) {
 		currentScene->complete = true;
 	}
+	for (int i = 0; i < 5; i++) {
+		if (completed[i] == 1) {
+			donecounter++;
+		}
+	}
+	if (currlvl == 1) {// we look at previous levels to see where we spawn
+		switch (prevlvl) {
+			case 2:
+				currentScene->state.player->position = glm::vec3(1.0f, -4.0f, 0);
+				break;
+			case 3:
+				currentScene->state.player->position = glm::vec3(11.0f, -4.0f, 0);
+				break;
+			case 4:
+				currentScene->state.player->position = glm::vec3(7.0f, -1.0f, 0);
+				break;
+			case 5:
+				currentScene->state.player->position = glm::vec3(7.0f, -5.0f, 0);
+				break;
+		}
+	}
+	if (donecounter == 4) {
+		despawnboss = true;
+	}
+	else if (donecounter == 5) {
+		currentScene->state.player->success = true;
+	}
+	
 }
 
 
@@ -74,11 +106,10 @@ void SwitchToScene(Scene *scene) {
 float LastTicks = 0.0f;
 SDL_Window* displayWindow;
 bool gameIsRunning = true;
-bool start = false;
 float accumulator = 0.0f;
 float delayTimer = 0.0f;
 bool bumpDirectionLeft;
-
+bool start = false;
 
 
 
@@ -120,7 +151,8 @@ void Initialize() {
 	sceneList[3] = new Level3();
 	sceneList[4] = new Level4();
 	sceneList[5] = new Level5();
-	SwitchToScene(sceneList[0]);
+
+	SwitchToScene(sceneList[3]);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 
@@ -174,23 +206,27 @@ void ProcessInput() {
 		currentScene->state.player->movement.x = -1.0f;
 		currentScene->state.player->animIndices = currentScene->state.player->animLeft;
 		currentScene->state.player->goLeft = true;
+		currentScene->state.player->lastdir = LEFT;
 	}
 	else if (keys[SDL_SCANCODE_RIGHT]) {
 		currentScene->state.player->movement.x = 1.0f;
 		currentScene->state.player->animIndices = currentScene->state.player->animRight;
 		currentScene->state.player->goLeft = false;
+		currentScene->state.player->lastdir = RIGHT;
 	}
 	
 	if (keys[SDL_SCANCODE_DOWN]) {
 		currentScene->state.player->movement.y = -1.0f;
 		currentScene->state.player->animIndices = currentScene->state.player->animDown;
 		currentScene->state.player->goUp = false;
+		currentScene->state.player->lastdir = DOWN;
 	}
 	
 	else if (keys[SDL_SCANCODE_UP]) {
 		currentScene->state.player->movement.y = 1.0f;
 		currentScene->state.player->animIndices = currentScene->state.player->animUp;
 		currentScene->state.player->goUp = true;
+		currentScene->state.player->lastdir = UP;
 	}
 	
 	if (glm::length(currentScene->state.player->movement) > 1.0f) {
@@ -204,9 +240,6 @@ void ProcessInput() {
 
 void Update() {
 	//Keeps track of different scenes and updates scene based on current scene
-	if (currentScene->state.nextScene >= 0) {
-		SwitchToScene(sceneList[currentScene->state.nextScene]);
-	}
 
 	float tick = (float)SDL_GetTicks() / 1000.f;
 	float deltaTime = tick - LastTicks;
@@ -301,7 +334,8 @@ int main(int argc, char* argv[]) {
 		ProcessInput();
 		Update();
 		if (currentScene->state.nextScene >= 0) { 
-			if (currentScene->state.nextScene !=1) {
+			if (currentScene->state.nextScene !=0) {
+				prevlvl = currlvl;
 				currlvl = currentScene->state.nextScene;
 				if (currentScene->complete) {
 					completed[currlvl - 2] = 1;

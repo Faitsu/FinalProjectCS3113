@@ -2,7 +2,7 @@
 #define LEVEL5_WIDTH 15 
 #define LEVEL5_HEIGHT 8
 
-#define ENEMY_COUNT 3
+#define ENEMY_COUNT 5
 
 
 unsigned int level5_data[] = {
@@ -10,20 +10,13 @@ unsigned int level5_data[] = {
 	3, 7, 7, 7, 7, 7, 7, 9, 7, 7, 7, 7, 7, 9, 9,
 	3, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
 	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
-	3, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
+	3, 11, 10, 8, 8, 8, 8, 8, 8, 8, 8, 8, 10, 5, 9,
 	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
 	3, 8, 8, 8, 8, 11, 10, 11, 10, 11, 8, 8, 8, 5, 9,
 	9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9
 };
 
 void Level5::Initialize() {
-	//set background
-
-	state.background = new Entity();
-	state.background->textureID = Util::LoadTexture("Sky.png");
-	state.background->entityType = BACKGROUND;
-	state.background->Update(0, state.player, state.enemies, 0, state.map);
-
 	state.player = new Entity();
 	state.player->position = glm::vec3(7.0f, -1.0f, 0);
 	state.player->movement = glm::vec3(0);
@@ -58,6 +51,10 @@ void Level5::Initialize() {
 
 	state.enemies[2].enemyType = SLEEPER;
 
+	state.enemies[3].enemyType = WALKER;
+	
+	state.enemies[3].horz = false;
+
 	for (int k = 0; k < ENEMY_COUNT; k++) {
 		//Technical 
 		//state.enemies[k].acceleration = glm::vec3(0, -9.81f, 0);
@@ -73,6 +70,8 @@ void Level5::Initialize() {
 		if (state.enemies[k].enemyType == WALKER) {
 			state.enemies[k].animLeft = new int[2]{ 6, 4 };
 			state.enemies[k].animRight = new int[2]{ 7,5 };
+			state.enemies[k].animUp = new int[2]{ 0, 1 };
+			state.enemies[k].animDown = new int[2]{ 2,3 };
 			state.enemies[k].animIndices = state.enemies[k].animRight;
 		}
 		else if (state.enemies[k].enemyType == SLEEPER) {
@@ -93,6 +92,8 @@ void Level5::Initialize() {
 	state.enemies[2].position = glm::vec3(1.0f, -2.0f, 0);
 	state.enemies[2].goLeft = true;
 
+	state.enemies[3].position = glm::vec3(12.0f, -5.0f, 0);
+	state.enemies[3].goUp = true;
 
 
 	state.lives = new Entity[3];
@@ -158,7 +159,6 @@ void Level5::Update(float deltaTime) {
 	}
 }
 void Level5::Render(ShaderProgram *program) {
-	state.background->Render(program);
 	state.map->Render(program);
 	if (!state.player->fail) {
 		for (int i = 0; i < ENEMY_COUNT; i++) {

@@ -130,5 +130,8 @@
     <Image Include="Space Slimes.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Space Slime Boss.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

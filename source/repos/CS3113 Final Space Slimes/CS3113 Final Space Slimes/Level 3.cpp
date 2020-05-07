@@ -2,15 +2,15 @@
 #define LEVEL3_WIDTH 15 
 #define LEVEL3_HEIGHT 8
 
-#define ENEMY_COUNT 3
+#define ENEMY_COUNT 4
 
 
 unsigned int level3_data[] = {
 	9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
 	3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 9, 9,
-	3, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
+	3, 11, 10, 11, 10, 8, 8, 11, 8, 8, 10, 11, 10, 5, 9,
 	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
-	9, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
+	9, 11, 10, 11, 10, 8, 8, 8, 10, 11, 10, 11, 10, 5, 9,
 	3, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
 	3, 8, 8, 8, 8, 11, 10, 11, 10, 11, 8, 8, 8, 5, 9,
 	9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9
@@ -18,12 +18,6 @@ unsigned int level3_data[] = {
 
 void Level3::Initialize() {
 	//set background
-
-	state.background = new Entity();
-	state.background->textureID = Util::LoadTexture("Sky.png");
-	state.background->entityType = BACKGROUND;
-	state.background->Update(0, state.player, state.enemies, 0, state.map);
-
 	state.player = new Entity();
 	state.player->position = glm::vec3(1, -4.0f, 0);
 	state.player->movement = glm::vec3(0);
@@ -58,9 +52,10 @@ void Level3::Initialize() {
 
 	state.enemies[2].enemyType = SLEEPER;
 
+	state.enemies[3].enemyType = SLEEPER;
+
 	for (int k = 0; k < ENEMY_COUNT; k++) {
 		//Technical 
-		//state.enemies[k].acceleration = glm::vec3(0, -9.81f, 0);
 		state.enemies[k].position = glm::vec3(0);
 		state.enemies[k].movement = glm::vec3(0);
 		state.enemies[k].entityType = ENEMY;
@@ -92,6 +87,10 @@ void Level3::Initialize() {
 
 	state.enemies[2].position = glm::vec3(1.0f, -2.0f, 0);
 	state.enemies[2].goLeft = true;
+
+
+	state.enemies[3].position = glm::vec3(7.0f, -2.0f, 0);
+	state.enemies[3].goLeft = true;
 
 
 
@@ -158,7 +157,6 @@ void Level3::Update(float deltaTime) {
 	}
 }
 void Level3::Render(ShaderProgram *program) {
-	state.background->Render(program);
 	state.map->Render(program);
 	if (!state.player->fail) {
 		for (int i = 0; i < ENEMY_COUNT; i++) {

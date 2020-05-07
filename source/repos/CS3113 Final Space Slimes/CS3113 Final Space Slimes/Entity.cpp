@@ -8,16 +8,18 @@ Entity::Entity() {
 }
 
 bool Entity::CheckCollision(Entity* other) {
-	if (isActive == false || other->isActive == false) { return false; }
-	float xdist = fabs(position.x - other->position.x) - ((width + other->width) / 2.0f);
-	float ydist = fabs(position.y - other->position.y) - ((height + other->height) / 2.0f);
+	if(other != NULL){
+		if (isActive == false || other->isActive == false) { return false; }
+		float xdist = fabs(position.x - other->position.x) - ((width + other->width) / 2.0f);
+		float ydist = fabs(position.y - other->position.y) - ((height + other->height) / 2.0f);
 
-	if (xdist < 0 && ydist < 0) { 
-		
-		return true;
+		if (xdist < 0 && ydist < 0) {
+
+			return true;
+		}
+
+		return false;
 	}
-
-	return false;
 }
 
 void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
@@ -112,46 +114,85 @@ void Entity::CheckCollisionsY(Map *map) {    // Probes for tiles
 	glm::vec3 bottom_right = glm::vec3(position.x + (width / 2), position.y - (height / 2), position.z);  
 	float penetration_x = 0;  
 	float penetration_y = 0;
-	if (map->IsSolid(top, &penetration_x, &penetration_y) && velocity.y > 0) { 
-		position.y -= penetration_y;      
-		velocity.y = 0; 
-		collidedTop = true;
-		colTop = true;
-	}
-	else if (map->IsSolid(top_left, &penetration_x, &penetration_y) && velocity.y > 0) { 
-		position.y -= penetration_y; 
-		velocity.y = 0;      
-		collidedTop = true; 
-		colTopLeft = true;
-	}
-	
-	else if (map->IsSolid(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
-		position.y -= penetration_y;     
-		velocity.y = 0;     
-		collidedTop = true;
-		colTopRight = true;
-	}
+	if (entityType == PLAYER) {
+		if (map->IsSolidPlayer(top, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTop = true;
+		}
+		else if (map->IsSolidPlayer(top_left, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTopLeft = true;
+		}
 
-	if (map->IsSolid(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {      
-		position.y += penetration_y;
-		velocity.y = 0;
-		colBot = true;
-		airborne = false;
+		else if (map->IsSolidPlayer(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTopRight = true;
+		}
+
+		if (map->IsSolidPlayer(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {
+			position.y += penetration_y;
+			velocity.y = 0;
+			colBot = true;
+			airborne = false;
+		}
+
+		else if (map->IsSolidPlayer(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {
+
+			colBotLeft = true;
+		}
+		else if (map->IsSolidPlayer(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {
+
+			colBotRight = true;
+		}
+
 	}
+	else {
+		if (map->IsSolid(top, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTop = true;
+		}
+		else if (map->IsSolid(top_left, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTopLeft = true;
+		}
 
-	else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {   
+		else if (map->IsSolid(top_right, &penetration_x, &penetration_y) && velocity.y > 0) {
+			position.y -= penetration_y;
+			velocity.y = 0;
+			collidedTop = true;
+			colTopRight = true;
+		}
 
-		colBotLeft = true;
+		if (map->IsSolid(bottom, &penetration_x, &penetration_y) && velocity.y < 0) {
+			position.y += penetration_y;
+			velocity.y = 0;
+			colBot = true;
+			airborne = false;
+		}
+
+		else if (map->IsSolid(bottom_left, &penetration_x, &penetration_y) && velocity.y < 0) {
+
+			colBotLeft = true;
+		}
+		else if (map->IsSolid(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {
+
+			colBotRight = true;
+		}
 	}
-	else if (map->IsSolid(bottom_right, &penetration_x, &penetration_y) && velocity.y < 0) {  
-
-		colBotRight = true;
-	}
-
 	if ((colBotLeft || colBotRight) && (velocity.x == 0)) {
 		position.y += penetration_y;
 		velocity.y = 0;
-		
+
 		airborne = false;
 	}
 }
@@ -161,17 +202,30 @@ void Entity::CheckCollisionsX(Map *map) {    // Probes for tiles
 	glm::vec3 right = glm::vec3(position.x + (width / 2), position.y, position.z);     
 	float penetration_x = 0;
 	float penetration_y = 0;
-	if (map->IsSolid(left, &penetration_x, &penetration_y) && velocity.x < 0) {
-		position.x += penetration_x;      
-		velocity.x = 0;    
-		colLeft = true; 
-	}     
-	if (map->IsSolid(right, &penetration_x, &penetration_y) && velocity.x > 0) { 
-		position.x -= penetration_x;     
-		velocity.x = 0;
-		colRight = true; 
+	if (entityType == PLAYER) {
+		if (map->IsSolidPlayer(left, &penetration_x, &penetration_y) && velocity.x < 0) {
+			position.x += penetration_x;
+			velocity.x = 0;
+			colLeft = true;
+		}
+		if (map->IsSolidPlayer(right, &penetration_x, &penetration_y) && velocity.x > 0) {
+			position.x -= penetration_x;
+			velocity.x = 0;
+			colRight = true;
+		}
 	}
-	
+	else {
+		if (map->IsSolid(left, &penetration_x, &penetration_y) && velocity.x < 0) {
+			position.x += penetration_x;
+			velocity.x = 0;
+			colLeft = true;
+		}
+		if (map->IsSolid(right, &penetration_x, &penetration_y) && velocity.x > 0) {
+			position.x -= penetration_x;
+			velocity.x = 0;
+			colRight = true;
+		}
+	}
 	if ((colLeft || colRight) && entityType == ENEMY) {
 		if (colLeft) {
 			goLeft = false;
@@ -203,51 +257,69 @@ void Entity::AISleeper() {
 };
 void Entity::AIWalker() {
 	//look at points and see wether we should turn or not
-	if (!colBotRight &&colBotLeft && !colBot) {
-		goLeft = true;
+
+	
+	if (colBot) {
+		goUp = true;
 	}
-	if (colBotRight && !colBotLeft && !colBot) {
-		goLeft = false;
+	if (colTop) {
+		goUp = false;
 	}
 
-	if (goLeft) {
-		movement.x = -1.0f;
-		animIndices = animLeft;
-	}
-	else {
-		movement.x = +1.0f;
-		animIndices = animRight;
-
-	}
-};
-void Entity::AIBoss(Entity* player) {
-	if (!colBotRight &&colBotLeft && !colBot) {
-		goLeft = true;
-	}
-	if (colBotRight && !colBotLeft && !colBot) {
-		goLeft = false;
-	}
-	//like walker but if the character sees the player then the penguin will shoot the player
-	float xdist = position.x - player->position.x;
-	if (goLeft) {
-		if (!shoot) {
+	if (horz) {
+		if (goLeft) {
 			movement.x = -1.0f;
 			animIndices = animLeft;
 		}
-		if (xdist < 0) {//PLayer on the Left
-			shoot = true;
-		}
-
-	}
-	else {
-		if (!shoot) {
+		else {
 			movement.x = +1.0f;
 			animIndices = animRight;
-		}
-		if (xdist > 0) {//PLayer on the right
-			shoot = true;
+
 		}
 	}
+	else{
+		if (goUp) {
+			movement.y = 1.0f;
+			animIndices = animUp;
+		}
+		else {
+			movement.y = -1.0f;
+			animIndices = animDown;
+
+		}
+	}
+};
+void Entity::AIBoss(Entity* player) { //like a stalker
+
+	if (!player->success && !player->fail) {
+		float xdist = position.x - player->position.x;
+		float ydist = position.y - player->position.y;
+		float totdist = sqrt((position.x * position.x) + (position.y * position.y)); //total distance
+		chase = true;
+		if (chase) {
+
+			if (xdist > 0 && (abs(xdist) > abs(ydist))) { //to the right
+				movement.x = -1.0f;
+				animIndices = animLeft;
+			}
+			else if (xdist < 0 &&  (abs(xdist) > abs(ydist))) {//to the left
+				movement.x = 1.0f;
+				animIndices = animRight;
+			}
+			if (ydist > 0 && (abs(xdist) < abs(ydist))) { // go down
+				movement.y = -1.0f;
+				animIndices = animDown;
+			}
+			else if (ydist < 0 && (abs(xdist) < abs(ydist))) {// go up
+				movement.y = 1.0f;
+				animIndices = animUp;
+			}
+		}
+	}
+	else {
+		movement.x = 0;
+	}
+	
 }; //goes unused in this game; not enough time :(
 
 void Entity::AIStalker(Entity* player) {
@@ -277,8 +349,8 @@ void Entity::AIStalker(Entity* player) {
 	if (entityType == ENEMY) {
 		//on this level there are only walkers
 		switch (enemyType) {
-			case STALKER:
-				AIStalker(player);
+			case BOSS:
+				AIBoss(player);
 				break;
 			case SLEEPER:
 				AISleeper();
@@ -374,12 +446,13 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 			shoot = false;
 		}
 
+
 		velocity.x = movement.x * speed;
 		velocity.y = movement.y * speed;
 		position.y += velocity.y * deltaTime;
 		CheckCollisionsY(map);
 		CheckCollisionsY(objects, objectCount);
-		
+
 		position.x += velocity.x * deltaTime;
 		CheckCollisionsX(map);
 		CheckCollisionsX(objects, objectCount);
@@ -390,7 +463,10 @@ void Entity::Update(float deltaTime, Entity *player, Entity* objects, int object
 		modelMatrix = glm::mat4(1.0f);
 
 		modelMatrix = glm::translate(modelMatrix, position);
-
+		if (enemyType == BOSS && inFirstRoom) {
+			modelMatrix = glm::scale(modelMatrix, glm::vec3(1.5f, 1.5f, 0.0f));
+		}
+		
 	}
 	else if (entityType == PROJECTILE) {
 		if (isActive) {
@@ -443,13 +519,20 @@ void Entity::Render(ShaderProgram* program) {
 	if (animIndices != NULL) {
 		if (animIdle != NULL ) {//idle will be bigger
 			if (idle && entityType == PLAYER) {
-				DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
-				return;
-			}
-		}
-		else if (shoot != NULL) {//idle will be bigger
-			if (idle) {
-				DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
+				switch (lastdir) {
+					case LEFT:
+						DrawSpriteFromTextureAtlas(program, textureID, animIdle[0]);
+						break;
+					case RIGHT:
+						DrawSpriteFromTextureAtlas(program, textureID, animIdle[1]);
+						break;
+					case UP:
+						DrawSpriteFromTextureAtlas(program, textureID, animIdle[2]);
+						break;
+					case DOWN:
+						DrawSpriteFromTextureAtlas(program, textureID, animIdle[3]);
+						break;
+				}
 				return;
 			}
 		}

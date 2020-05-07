@@ -25,7 +25,7 @@ void Level4::Initialize() {
 	state.background->Update(0, state.player, state.enemies, 0, state.map);
 
 	state.player = new Entity();
-	state.player->position = glm::vec3(8, -6.0f, 0);
+	state.player->position = glm::vec3(7, -6.0f, 0);
 	state.player->movement = glm::vec3(0);
 	state.player->speed = 1.75f;
 	state.player->textureID = Util::LoadTexture("Space Slime Player Sprite Sheet.png");
@@ -153,7 +153,7 @@ void Level4::Update(float deltaTime) {
 		state.lives[j].Update(0, state.player, state.enemies, 0, state.map);
 	}
 
-	if (state.player->position.y <= -6.0f) {//you have to kill all the enemies before leaving the level
+	if (state.player->position.y <= -6.5f) {//you have to kill all the enemies before leaving the level
 		state.nextScene = 1;
 	}
 }

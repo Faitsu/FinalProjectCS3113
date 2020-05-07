@@ -9,21 +9,15 @@ unsigned int level2_data[] = {
 	9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9,
 	3, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 9, 9,
 	3, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 5, 9,
-	3, 8, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
-	3, 8, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 9, 9,
-	3, 8, 11, 10, 11, 10, 11, 10, 11, 10, 11, 10, 11, 5, 9,
+	3, 8, 11, 10, 11, 10, 11, 10, 11, 10, 11, 8, 11, 5, 9,
+	3, 8, 10, 11, 10, 11, 10, 11, 10, 11, 10, 8, 10, 9, 9,
+	3, 8, 11, 10, 11, 10, 11, 8, 11, 10, 11, 10, 11, 5, 9,
 	3, 8, 8, 8, 8, 11, 10, 11, 10, 11, 8, 8, 8, 5, 9,
 	9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 9
 };
 
 void Level2::Initialize() {
 	//set background
-
-	state.background = new Entity();
-	state.background->textureID = Util::LoadTexture("Sky.png");
-	state.background->entityType = BACKGROUND;
-	state.background->Update(0, state.player, state.enemies, 0, state.map);
-
 	state.player = new Entity();
 	state.player->position = glm::vec3(12, -4.0f, 0);
 	state.player->movement = glm::vec3(0);
@@ -83,10 +77,10 @@ void Level2::Initialize() {
 		state.enemies[k].animCols = 4;
 		state.enemies[k].animRows = 3;
 	}
-	state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
+	state.enemies[0].position = glm::vec3(9.0f, -5.0f, 0);
 	
 
-	state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);
+	state.enemies[1].position = glm::vec3(10.0f, -3.0f, 0);
 	state.enemies[1].goLeft = true;
 	
 
@@ -158,7 +152,6 @@ void Level2::Update(float deltaTime) {
 	}
 }
 void Level2::Render(ShaderProgram *program) {
-	state.background->Render(program);
 	state.map->Render(program);
 	if (!state.player->fail) {
 		for (int i = 0; i < ENEMY_COUNT; i++) {
