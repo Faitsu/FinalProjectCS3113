@@ -83,7 +83,7 @@ void Level4::Initialize() {
 		state.enemies[k].animCols = 4;
 		state.enemies[k].animRows = 3;
 	}
-	state.enemies[0].position = glm::vec3(6.0f, -5.0f, 0);
+	state.enemies[0].position = glm::vec3(6.0f, -4.0f, 0);
 
 
 	state.enemies[1].position = glm::vec3(9.5f, -3.0f, 0);

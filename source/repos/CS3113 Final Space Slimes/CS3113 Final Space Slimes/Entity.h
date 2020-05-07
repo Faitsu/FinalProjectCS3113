@@ -75,7 +75,8 @@ class Entity {
 		int hp = 3;
 		bool chase = false;
 		bool shoot = false;
-
+		bool killable = false;
+		bool spawnable = false;
 
 		//Type of Entity (determines how we update it and such)
 		EntityType entityType;

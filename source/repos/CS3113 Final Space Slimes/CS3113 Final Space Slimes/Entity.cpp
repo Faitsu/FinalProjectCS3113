@@ -36,6 +36,16 @@ void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
 				position.y -= penetrationY;              
 				velocity.y = 0; 
 				collidedTop = true;
+
+				if (entityType == PROJECTILE && object->entityType == ENEMY) {
+					isActive = false;
+					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
+						object->isActive = false;
+					}
+					else {
+						object->hp--;
+					}
+				}
 			}
 			else if (velocity.y < 0) { 
 				position.y += penetrationY;          
@@ -43,7 +53,21 @@ void Entity::CheckCollisionsY(Entity *objects, int objectCount) {
 				collidedBottom = true;
 
 				if (entityType == PLAYER && object->entityType ==ENEMY && !recover ) {
-					object->isActive = false;
+					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
+						object->isActive = false;
+					}
+					else {
+						object->hp--;
+					}
+				}
+				else if (entityType == PROJECTILE && object->entityType == ENEMY) {
+					isActive = false;
+					if (object->enemyType != BOSS || object->hp <= 0) {//because of how the algorithm works
+						object->isActive = false;
+					}
+					else {
+						object->hp--;
+					}
 				}
 			}
 		}

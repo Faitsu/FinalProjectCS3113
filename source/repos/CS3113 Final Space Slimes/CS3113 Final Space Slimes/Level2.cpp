@@ -89,6 +89,7 @@ void Level2::Initialize() {
 	
 
 
+
 	state.lives = new Entity[3];
 	for (int i = 0; i < 3; i++) {
 		state.lives[i].textureID = Util::LoadTexture("pixel heart.png");

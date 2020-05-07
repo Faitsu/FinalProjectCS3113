@@ -170,6 +170,17 @@
     <Image Include="Sunset Background.png" />
     <Image Include="Winter Blocks.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fragment.glsl" />
+    <None Include="shaders\fragment_lit.glsl" />
+    <None Include="shaders\fragment_textured.glsl" />
+    <None Include="shaders\vertex.glsl" />
+    <None Include="shaders\vertex_lit.glsl" />
+    <None Include="shaders\vertex_textured.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Sector 1.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

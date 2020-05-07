@@ -88,7 +88,7 @@ void Level1::Initialize() {
 	
 	else {
 		state.enemies = new Entity[1];
-		state.enemies[0].position = glm::vec3(7, -3.0f, 0);
+		state.enemies[0].position = glm::vec3(8, -3.0f, 0);
 		state.enemies[0].movement = glm::vec3(0);
 		state.enemies[0].speed = 1.0f;
 		state.enemies[0].textureID = Util::LoadTexture("Space Slime Boss.png");
@@ -111,6 +111,7 @@ void Level1::Initialize() {
 		state.enemies[0].animRows = 3;
 
 		state.enemies[0].inFirstRoom = true;
+		state.enemies[0].killable = true;
 	}
 	state.lives = new Entity[3];
 	for (int i = 0; i < 3; i++) {

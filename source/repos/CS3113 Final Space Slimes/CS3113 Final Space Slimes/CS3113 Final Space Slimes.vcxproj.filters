@@ -134,4 +134,17 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fragment.glsl" />
+    <None Include="shaders\fragment_textured.glsl" />
+    <None Include="shaders\vertex.glsl" />
+    <None Include="shaders\vertex_textured.glsl" />
+    <None Include="shaders\vertex_lit.glsl" />
+    <None Include="shaders\fragment_lit.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Sector 1.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
+  </ItemGroup>
 </Project>

@@ -90,11 +90,8 @@ void SwitchToScene(Scene *scene) {
 				break;
 		}
 	}
-	if (donecounter == 4) {
-		despawnboss = true;
-	}
 	else if (donecounter == 5) {
-		currentScene->state.player->success = true;
+		currentScene->state.enemies[0].killable = true;
 	}
 	
 }
@@ -128,7 +125,7 @@ void Initialize() {
 
 	glViewport(0, 0, 640, 480);
 
-	program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
+	program.Load("shaders/vertex_lit.glsl", "shaders/fragment_lit.glsl");
 
 	viewMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::mat4(1.0f);
@@ -152,11 +149,11 @@ void Initialize() {
 	sceneList[4] = new Level4();
 	sceneList[5] = new Level5();
 
-	SwitchToScene(sceneList[3]);
+	SwitchToScene(sceneList[1]);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 
-	music = Mix_LoadMUS("Sky Tower.mp3");
+	music = Mix_LoadMUS("Sector 1.mp3");
 	success = Mix_LoadMUS("Victory Kirby.mp3");
 	fail = Mix_LoadMUS("Game Over LoZ.mp3");
 	Mix_PlayMusic(music, -1);
@@ -240,7 +237,6 @@ void ProcessInput() {
 
 void Update() {
 	//Keeps track of different scenes and updates scene based on current scene
-
 	float tick = (float)SDL_GetTicks() / 1000.f;
 	float deltaTime = tick - LastTicks;
 	LastTicks = tick;
@@ -271,8 +267,15 @@ void Update() {
 	}
 	while (deltaTime >= FIXED_TIMESTEP) {
 		currentScene->Update(FIXED_TIMESTEP);
+
+		program.SetLightPosition(currentScene->state.player->position);
+
 		deltaTime -= FIXED_TIMESTEP;
 
+	}
+	if (currentScene->state.enemies[0].killable && (currentScene->state.enemies[0].hp <= 0)) {
+		currentScene->state.enemies[0].isActive = false;
+		currentScene->state.player->success = true;
 	}
 
 	if (currentScene->state.player->collidedLeft || currentScene->state.player->collidedRight ) {//for player and enemy
