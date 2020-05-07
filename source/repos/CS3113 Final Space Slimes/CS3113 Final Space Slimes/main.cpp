@@ -181,17 +181,20 @@ void ProcessInput() {
 			break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
-			case SDLK_SPACE:
+			    case SDLK_RETURN:
 				if (start == false) {
-					start = true;
-					currentScene->state.nextScene = 1;
+				    start = true;
+				    currentScene->state.nextScene = 1;
+				    break;
 				}
-				else {
-					currentScene->state.player->shoot = true;
+			    case SDLK_SPACE: //Shooting Mechanism
+				for(int i = 0; i < 20; i++) {
+				    if(currentScene->state.projectile[i].shoot == false) {
+					currentScene->state.projectile[i].shoot = true;
+					break;
+				    }
 				}
-				break;
 			}
-		break;
 		}
 
 	}
