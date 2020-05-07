@@ -3,6 +3,7 @@
 #define LEVEL4_HEIGHT 8
 
 #define ENEMY_COUNT 3
+#define BULLET_COUNT 20
 
 
 unsigned int level4_data[] = {
@@ -103,7 +104,20 @@ void Level4::Initialize() {
 		state.lives[i].Update(0, state.player, state.enemies, 0, state.map);
 
 	}
-
+	
+	//Projectile/bullets
+    	state.projectile = new Entity[BULLET_COUNT];
+    
+    	for(int i = 0; i < BULLET_COUNT; i++) {
+		state.projectile[i].textureID = Util::LoadTexture("Snowball.png");
+		//state.projectile[i].position = glm::vec3(1, -3.0f, 0);
+		//state.projectile[i].movement = glm::vec3(1,1,1);
+		state.projectile[i].entityType = PROJECTILE;
+		state.projectile[i].speed = 2.0f;
+		state.projectile[i].height = 0.1f;
+		state.projectile[i].width = 0.1f;
+		state.projectile[i].projectileType = READY;
+    	}
 
 
 	GLuint mapTextureID = Util::LoadTexture("Space Slimes Background.png");
@@ -122,6 +136,14 @@ void Level4::Update(float deltaTime) {
 			complete = true;
 		}
 	}
+	
+	//Shooting projectile/bullets
+    	for(int i = 0; i < BULLET_COUNT; i++) {
+        	//Codition for reloading projectile
+        	if(state.projectile[i].shoot == true) {
+          		state.projectile[i].Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
+        	}
+    	}
 
 	if (state.player->recover) {
 		state.player->Update(deltaTime, state.player, state.enemies, 0, state.map);
@@ -190,5 +212,9 @@ void Level4::Render(ShaderProgram *program) {
 		Util::DrawText(program, fontTextureID, "Game Over!", .3f, 0.1f, fontPos3);
 		Util::DrawText(program, fontTextureID, "Try Again!", .2f, 0.1f, fontPos2);
 	}
+	
+	for(int i = 0; i < BULLET_COUNT; i++) {
+        	state.projectile[i].Render(program);
+    	}
 
 }
