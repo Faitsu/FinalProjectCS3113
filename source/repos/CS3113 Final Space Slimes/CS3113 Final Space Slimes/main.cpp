@@ -43,7 +43,7 @@ Mix_Music* music;
 Mix_Music* success;
 Mix_Music* fail;
 
-Mix_Chunk* jump;
+Mix_Chunk* shoot;
 Mix_Chunk* bump;
 Mix_Chunk* stomp;
 
@@ -162,7 +162,7 @@ void Initialize() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 	Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
-	jump = Mix_LoadWAV("smb3_jump.wav");
+	shoot = Mix_LoadWAV("smb_fireball.wav");
 	bump = Mix_LoadWAV("smb3_bump.wav");
 	stomp = Mix_LoadWAV("smb3_stomp.wav");
 
@@ -192,6 +192,7 @@ void ProcessInput() {
 					else {
 						for (int i = 0; i < 4; i++) {
 							if (currentScene->state.projectile[i].isActive == false) {
+								Mix_PlayChannel(-1, shoot, 0);
 								currentScene->state.projectile[i].Shoot(currentScene->state.player);
 								break;
 							}
@@ -284,15 +285,14 @@ void Update() {
 		currentScene->state.player->success = true;
 	}
 
-	if (currentScene->state.player->collidedLeft || currentScene->state.player->collidedRight ) {//for player and enemy
-		Mix_PlayChannel(-1, bump, 0);
-	}
+	
+
 
 	if ((currentScene->state.player->position.y <= -7.5) && !currentScene->state.player->fail) {
 		Mix_PlayChannel(-1, bump, 0);
 	}
 
-	if (currentScene->state.player->colLeft || currentScene->state.player->colRight) {//for player and map
+	if (currentScene->state.player->colLeft || currentScene->state.player->colRight || currentScene->state.player->colTop || currentScene->state.player->colBot) {//for player and map
 			Mix_PlayChannel(-1, bump, 0);
 	}
 
@@ -328,7 +328,7 @@ void Render() {
 
 void Shutdown() {
 	SDL_Quit();
-	Mix_FreeChunk(jump);
+	Mix_FreeChunk(shoot);
 	Mix_FreeChunk(bump);
 	Mix_FreeChunk(stomp);
 	Mix_FreeMusic(music);
