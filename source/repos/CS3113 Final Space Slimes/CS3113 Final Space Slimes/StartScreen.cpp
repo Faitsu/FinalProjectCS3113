@@ -50,6 +50,29 @@ void StartScreen::Initialize() {
 	state.player->animRows = 3;
 	state.player->isActive = false;
 	
+	state.enemies = new Entity[1];
+	state.enemies[0].position = glm::vec3(8, -3.0f, 0);
+	state.enemies[0].movement = glm::vec3(0);
+	state.enemies[0].speed = 1.15f;
+	state.enemies[0].textureID = Util::LoadTexture("Space Slime Boss.png");
+
+
+	state.enemies[0].entityType = ENEMY;
+	state.enemies[0].enemyType = BOSS;
+
+	state.enemies[0].animRight = new int[2]{ 7, 5 };
+	state.enemies[0].animLeft = new int[2]{ 6, 4 };
+	state.enemies[0].animUp = new int[2]{ 0, 1 };
+	state.enemies[0].animDown = new int[2]{ 2, 3 };
+	state.enemies[0].height = 0.95f;
+	state.enemies[0].width = 1.0f;
+
+
+	state.enemies[0].animFrames = 2;
+	state.enemies[0].animIndices = state.player->animDown;
+	state.enemies[0].animCols = 3;
+	state.enemies[0].animRows = 3;
+
 	GLuint mapTextureID = Util::LoadTexture("Space Slimes Background.png");
 	state.map = new Map(START_WIDTH, START_HEIGHT, startScreen_data, mapTextureID, 1.0f, 3, 4);
 	state.nextScene = -1;

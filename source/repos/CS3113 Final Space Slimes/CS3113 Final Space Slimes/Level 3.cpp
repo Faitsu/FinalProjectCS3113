@@ -3,7 +3,7 @@
 #define LEVEL3_HEIGHT 8
 
 #define ENEMY_COUNT 4
-#define BULLET_COUNT 20
+#define BULLET_COUNT 4
 
 
 unsigned int level3_data[] = {
@@ -109,10 +109,8 @@ void Level3::Initialize() {
     
     	for(int i = 0; i < BULLET_COUNT; i++) {
 		state.projectile[i].textureID = Util::LoadTexture("Snowball.png");
-		//state.projectile[i].position = glm::vec3(1, -3.0f, 0);
-		//state.projectile[i].movement = glm::vec3(1,1,1);
 		state.projectile[i].entityType = PROJECTILE;
-		state.projectile[i].speed = 2.0f;
+		state.projectile[i].speed = 5.0f;
 		state.projectile[i].height = 0.1f;
 		state.projectile[i].width = 0.1f;
 		state.projectile[i].projectileType = READY;
@@ -142,12 +140,20 @@ void Level3::Update(float deltaTime) {
 	}
 	
 	//Shooting projectile/bullets
-    	for(int i = 0; i < BULLET_COUNT; i++) {
-        	//Codition for reloading projectile
-        	if(state.projectile[i].shoot == true) {
-            		state.projectile[i].Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
-        	}
-    	}
+	for (int i = 0; i < BULLET_COUNT; i++) {
+		//Codition for reloading projectile
+
+		//We should check if projectiles are not ready or read, if they were shot then we make them ready
+		if (state.projectile[i].isActive) {
+			state.projectile[i].Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
+		}
+		if (state.projectile[i].isActive && (state.projectile[i].position.x >= 12.25f || state.projectile[i].position.x <= 0.5f || state.projectile[i].position.y <= -6.5f || state.projectile[i].position.y >= -0.5f)) {
+			state.projectile[i].isActive = false;
+			state.projectile[i].shoot = false;
+			state.projectile[i].projectileType = READY;
+		}
+
+	}
 
 	if (state.player->recover) {
 		state.player->Update(deltaTime, state.player, state.enemies, 0, state.map);

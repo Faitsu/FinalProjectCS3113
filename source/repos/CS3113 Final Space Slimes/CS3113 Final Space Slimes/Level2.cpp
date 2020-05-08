@@ -3,7 +3,7 @@
 #define LEVEL2_HEIGHT 8
 
 #define ENEMY_COUNT 3
-#define BULLET_COUNT 20
+#define BULLET_COUNT 4
 
 
 unsigned int level2_data[] = {
@@ -22,7 +22,7 @@ void Level2::Initialize() {
 	state.player = new Entity();
 	state.player->position = glm::vec3(12, -4.0f, 0);
 	state.player->movement = glm::vec3(0);
-	state.player->speed = 1.75f;
+	state.player->speed = 2.00f;
 	state.player->textureID = Util::LoadTexture("Space Slime Player Sprite Sheet.png");
 
 	state.player->entityType = PLAYER;
@@ -108,7 +108,7 @@ void Level2::Initialize() {
 		//state.projectile[i].position = glm::vec3(1, -3.0f, 0);
 		//state.projectile[i].movement = glm::vec3(1,1,1);
 		state.projectile[i].entityType = PROJECTILE;
-		state.projectile[i].speed = 2.0f;
+		state.projectile[i].speed = 5.0f;
 		state.projectile[i].height = 0.1f;
 		state.projectile[i].width = 0.1f;
 		state.projectile[i].projectileType = READY;
@@ -138,12 +138,20 @@ void Level2::Update(float deltaTime) {
 	}
 	
 	//Shooting projectile/bullets
-    	for(int i = 0; i < BULLET_COUNT; i++) {
+	for (int i = 0; i < BULLET_COUNT; i++) {
 		//Codition for reloading projectile
-		if(state.projectile[i].shoot == true) {
-		    state.projectile[i].Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
+
+		//We should check if projectiles are not ready or read, if they were shot then we make them ready
+		if (state.projectile[i].isActive) {
+			state.projectile[i].Update(deltaTime, state.player, state.enemies, ENEMY_COUNT, state.map);
 		}
-    	}
+		if (state.projectile[i].isActive && (state.projectile[i].position.x >= 12.25f || state.projectile[i].position.x <= 0.5f || state.projectile[i].position.y <= -6.5f || state.projectile[i].position.y >= -0.5f)) {
+			state.projectile[i].isActive = false;
+			state.projectile[i].shoot = false;
+			state.projectile[i].projectileType = READY;
+		}
+
+	}
 
 	if (state.player->recover) {
 		state.player->Update(deltaTime, state.player, state.enemies, 0, state.map);

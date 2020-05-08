@@ -62,7 +62,7 @@ bool despawnboss = false;
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {
-	int donecounter = 5;
+	int donecounter = 0;
 	currentScene = scene;
 	currentScene->Initialize();
 	currentScene->state.player->hp = hp;
@@ -152,7 +152,7 @@ void Initialize() {
 	sceneList[4] = new Level4();
 	sceneList[5] = new Level5();
 
-	SwitchToScene(sceneList[1]);
+	SwitchToScene(sceneList[0]);
 
 	Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
 
@@ -184,19 +184,20 @@ void ProcessInput() {
 			break;
 		case SDL_KEYDOWN:
 			switch (event.key.keysym.sym) {
-			    case SDLK_RETURN:
-				if (start == false) {
-				    start = true;
-				    currentScene->state.nextScene = 1;
-				    break;
-				}
 			    case SDLK_SPACE: //Shooting Mechanism
-				for(int i = 0; i < 20; i++) {
-				    if(currentScene->state.projectile[i].shoot == false) {
-					currentScene->state.projectile[i].shoot = true;
-					break;
-				    }
-				}
+					if (start == false) {
+						start = true;
+						currentScene->state.nextScene = 1;
+						break;
+					}
+					else {
+						for (int i = 0; i < 4; i++) {
+							if (currentScene->state.projectile[i].isActive == false) {
+								currentScene->state.projectile[i].Shoot(currentScene->state.player);
+								break;
+							}
+						}
+					}
 			}
 		}
 
@@ -347,7 +348,7 @@ int main(int argc, char* argv[]) {
 				prevlvl = currlvl;
 				currlvl = currentScene->state.nextScene;
 				if (currentScene->complete) {
-					completed[currlvl - 2] = 1;
+					completed[prevlvl - 1] = 1;
 				}
 				hp = currentScene->state.player->hp;
 			}
