@@ -180,6 +180,8 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="Sector 1.mp3" />
+    <Media Include="smb_fireball.wav" />
+    <Media Include="smb_kick.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

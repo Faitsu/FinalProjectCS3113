@@ -44,9 +44,9 @@ Mix_Music* music;
 Mix_Music* success;
 Mix_Music* fail;
 
-Mix_Chunk* jump;
+Mix_Chunk* shoot_noise;
 Mix_Chunk* bump;
-Mix_Chunk* stomp;
+Mix_Chunk* hit;
 
 Scene* currentScene; 
 Scene* sceneList[7];
@@ -118,7 +118,7 @@ glm::mat4 viewMatrix, modelMatrix, modelMatrix2, projectionMatrix;
 
 void Initialize() {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-	displayWindow = SDL_CreateWindow("Polar Bear Adventures!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
+	displayWindow = SDL_CreateWindow("Space Slime!", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL);
 	SDL_GLContext context = SDL_GL_CreateContext(displayWindow);
 	SDL_GL_MakeCurrent(displayWindow, context);
 
@@ -163,9 +163,9 @@ void Initialize() {
 	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 	Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
-	jump = Mix_LoadWAV("smb3_jump.wav");
+	shoot_noise = Mix_LoadWAV("smb_fireball.wav");
 	bump = Mix_LoadWAV("smb3_bump.wav");
-	stomp = Mix_LoadWAV("smb3_stomp.wav");
+	hit = Mix_LoadWAV("smb_kick.wav");
 
 	
 }
@@ -193,7 +193,8 @@ void ProcessInput() {
 					else {
 						for (int i = 0; i < 4; i++) {
 							if (currentScene->state.projectile[i].isActive == false) {
-								currentScene->state.projectile[i].Shoot(currentScene->state.player);
+								currentScene->state.projectile[i].Shoot(currentScene->state.player); 
+								Mix_PlayChannel(-1, shoot_noise, 0);
 								break;
 							}
 						}
@@ -285,21 +286,15 @@ void Update() {
 		currentScene->state.player->success = true;
 	}
 
-	if (currentScene->state.player->collidedLeft || currentScene->state.player->collidedRight ) {//for player and enemy
-		Mix_PlayChannel(-1, bump, 0);
-	}
-
 	if ((currentScene->state.player->position.y <= -7.5) && !currentScene->state.player->fail) {
 		Mix_PlayChannel(-1, bump, 0);
 	}
 
-	if (currentScene->state.player->colLeft || currentScene->state.player->colRight) {//for player and map
+	if (currentScene->state.player->colLeft || currentScene->state.player->colRight || currentScene->state.player->colTop || currentScene->state.player->colBot) {//for player and map
 			Mix_PlayChannel(-1, bump, 0);
 	}
 
-	if (currentScene->state.player->collidedBottom) {
-		Mix_PlayChannel(-1, stomp, 0);
-	}
+	
 	
 	accumulator = deltaTime;
 	viewMatrix = glm::mat4(1.0f);
@@ -329,9 +324,9 @@ void Render() {
 
 void Shutdown() {
 	SDL_Quit();
-	Mix_FreeChunk(jump);
+	Mix_FreeChunk(shoot_noise);
 	Mix_FreeChunk(bump);
-	Mix_FreeChunk(stomp);
+	Mix_FreeChunk(hit);
 	Mix_FreeMusic(music);
 	Mix_FreeMusic(success);
 	Mix_FreeMusic(fail);
