@@ -5,10 +5,10 @@ For our final project of the semester, we made a top down shooter/dungeon crawle
 
 **CONTROLS:**
 
-W: UP
-A: LEFT
-S:DOWN
-D:RIGHT 
+UP KEY: UP
+LEFT KEY: LEFT
+DOWN KEY:DOWN
+RIGHT KEY:RIGHT 
 
 SPACE: SHOOT
 
