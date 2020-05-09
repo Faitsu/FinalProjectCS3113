@@ -23,4 +23,5 @@ YOU LOSE ALL THREE LIVES
 
 **BUGS**
 -Game will randomly crash due to break points. This is most likely due to the transfer of information in main and the fact that we do not have a copy constructor, delete, or = operator
+
 -Player may or may not glitch through walls if they walk right next to them. This is most likely because of how the collision detection works in this game.
