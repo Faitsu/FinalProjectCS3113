@@ -55,13 +55,23 @@ int prevlvl = 1;
 
 //if we complete the whole level, slimes will not respawn
 int completed[5] = {0,0,0,0,0};
-bool despawnboss = false;
+
 
 
 
 int hp = 3;
 void SwitchToScene(Scene *scene) {//switches from one level to another. In this case the levels are the rooms
 	int donecounter = 0;
+	
+	//testing out code it seems like memory allocation is messed up if theres too many levels so I should delete everything before moving to the next scene
+	if (currentScene != 0) {
+		delete currentScene->state.map;
+		delete currentScene->state.player;
+		delete currentScene->state.enemies; //tried to delete enemies inside the array but it wont work. will try again later
+		delete currentScene->state.lives;
+		delete currentScene->state.background;
+		delete currentScene->state.projectile;
+	}
 	currentScene = scene;
 	currentScene->Initialize();
 	currentScene->state.player->hp = hp;
