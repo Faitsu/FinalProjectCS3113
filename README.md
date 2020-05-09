@@ -22,10 +22,14 @@ YOU KILL THE FINAL SLIME IN THE MIDDLE ROOM AFTER CLEARING ALL OTHER ROOMS
 YOU LOSE ALL THREE LIVES
 
 **BUGS**
--Game will randomly crash due to break points. This is most likely due to the transfer of information in main and the fact that we do not have a copy constructor, delete, or = operator '\n'
-  -Take time when entering rooms, it seems like code will crash due to things not loading in fast enough \n
-  -Tried adding memory allocation deletes to free up space and lessen the amount of memory leaks I will get. Seems to have aliveated the problem a tiny bit, but I do not think this is the complete fix. \n
-  -There might also be problems due to the passing of variables between main and level...probably need a copy constructor but I'm not sure.\n
+-Game will randomly crash due to break points. This is most likely due to the transfer of information in main and the fact that we do not have a copy constructor, delete, or = operator 
+
+  -Take time when entering rooms, it seems like code will crash due to things not loading in fast enough 
+
+  -Tried adding memory allocation deletes to free up space and lessen the amount of memory leaks I will get. Seems to have aliveated the problem a tiny bit, but I do not think this is the complete fix. 
+  
+  -There might also be problems due to the passing of variables between main and level...probably need a copy constructor but I'm not sure.
+  
   **I would really like advice on the above bug if you have the time proffesor :(**
 
 
