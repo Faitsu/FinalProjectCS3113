@@ -29,10 +29,6 @@ YOU LOSE ALL THREE LIVES
   -Tried adding memory allocation deletes to free up space and lessen the amount of memory leaks I will get. Seems to have aliveated the problem a tiny bit, but I do not think this is the complete fix. 
   
   -There might also be problems due to the passing of variables between main and level...probably need a copy constructor but I'm not sure.
-  
-  **I would really like advice on the above bug if you have the time proffesor :(**
-
-
 
 -Player may or may not glitch through walls if they walk right next to them. This is most likely because of how the collision detection works in this game.
 
